@@ -38,8 +38,8 @@ public class ProductService {
 	}
 
 	public List<ProductDto> getAll() {
-		return productRepository.findAll().parallelStream().map(product -> new ProductDto(product.getName(), product
-				.getPrice())).collect(Collectors.toList());
+		return productRepository.findAll().parallelStream().map(product -> new ProductDto(product.getId(), product.getName(),
+				product.getPrice())).collect(Collectors.toList());
 	}
 
 }

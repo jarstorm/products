@@ -1,27 +1,26 @@
-package com.product.model;
+package com.product.model.dto;
 
 import java.util.Calendar;
 import java.util.List;
 
-import javax.persistence.*;
+import com.product.model.ProductOrder;
 
-@Entity
-@Table(name = "P_ORDER")
-public class Order {
+public class OrderDto {
 
-	@Id
-	@GeneratedValue
-	@Column(name = "ORDER_ID")
 	private Long id;
 
-	@Column(name = "ORDER_EMAIL")
-	private String userEmail;
-
-	@Column(name = "ORDER_DATE")
 	private Calendar creationDate;
 
-	@OneToMany(mappedBy = "id.orderId", cascade = CascadeType.ALL)
+	private String userEmail;
+
 	private List<ProductOrder> productOrders;
+
+	public OrderDto(Long id, Calendar creationDate, String userEmail, List<ProductOrder> productOrders) {
+		this.id = id;
+		this.creationDate = creationDate;
+		this.userEmail = userEmail;
+		this.productOrders = productOrders;
+	}
 
 	public Long getId() {
 		return id;
@@ -31,20 +30,20 @@ public class Order {
 		this.id = id;
 	}
 
-	public String getUserEmail() {
-		return userEmail;
-	}
-
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
-	}
-
 	public Calendar getCreationDate() {
 		return creationDate;
 	}
 
 	public void setCreationDate(Calendar creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
 	}
 
 	public List<ProductOrder> getProductOrders() {

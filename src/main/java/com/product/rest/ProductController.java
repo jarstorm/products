@@ -40,22 +40,4 @@ public class ProductController {
 		productService.updateProduct(id, name, price);
 	}
 
-	/*
-	 * @GetMapping(value = "/{id}")
-	 * @ResponseStatus(HttpStatus.OK)
-	 * public PostDto getPost(@PathVariable Long id) {
-	 * return postService.getPost(id);
-	 * }
-	 * @GetMapping(value = "/{id}/comments")
-	 * @ResponseBody
-	 * public List<CommentDto> getPostComments(@PathVariable Long id) {
-	 * return commentService.getCommentsForPost(id);
-	 * }
-	 * @PostMapping(value = "/{id}/comments")
-	 * @ResponseStatus(HttpStatus.OK)
-	 * public void addPostComment(@RequestParam NewCommentDto dto) {
-	 * commentService.addComment(dto);
-	 * }
-	 */
-
 }

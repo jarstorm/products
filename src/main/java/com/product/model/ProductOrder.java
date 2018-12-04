@@ -2,33 +2,34 @@ package com.product.model;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "P_PRODUCT_ORDER")
 public class ProductOrder {
 
-	@Id
-	private Long productId;
+	@EmbeddedId
+	private ProductOrderId id;
 
-	private Long orderId;
-
+	@Column(name = "PO_PRICE")
 	private BigDecimal productPrice;
 
-	public Long getProductId() {
-		return productId;
+	@Column(name = "PO_AMOUNT")
+	private Long amount;
+
+	public ProductOrder() {
+
+	}
+	public ProductOrder(Long productId, Long orderId) {
+		this.id = new ProductOrderId(productId, orderId);
 	}
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
+	public ProductOrderId getId() {
+		return id;
 	}
 
-	public Long getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(Long orderId) {
-		this.orderId = orderId;
+	public void setId(ProductOrderId id) {
+		this.id = id;
 	}
 
 	public BigDecimal getProductPrice() {
@@ -39,4 +40,11 @@ public class ProductOrder {
 		this.productPrice = productPrice;
 	}
 
+	public Long getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Long amount) {
+		this.amount = amount;
+	}
 }
