@@ -1,6 +1,6 @@
 package com.product.rest;
 
-public class CommentControllerTest extends AbstractControllerTest {
+public class OrderControllerTest extends AbstractControllerTest {
 
 /*
 	@Test

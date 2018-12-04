@@ -10,6 +10,10 @@ public class ProductDto {
 
 	private BigDecimal price;
 
+	public ProductDto() {
+
+	}
+
 	public ProductDto(Long id, String name, BigDecimal price) {
 		this.id = id;
 		this.name = name;

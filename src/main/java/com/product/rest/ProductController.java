@@ -29,13 +29,13 @@ public class ProductController {
 
 	@PutMapping(value = "/create")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void create(@RequestParam String name, @RequestParam @NumberFormat(pattern = "####.##") BigDecimal price) {
-		productService.createProduct(name, price);
+	public Long create(@RequestParam String name, @RequestParam @NumberFormat(pattern = "####.##") BigDecimal price) {
+		return productService.createProduct(name, price);
 	}
 
 	@PostMapping(value = "/update")
 	@ResponseStatus(HttpStatus.OK)
-	public void create(@RequestParam Long id, @RequestParam String name,
+	public void update(@RequestParam Long id, @RequestParam String name,
 			@RequestParam @NumberFormat(pattern = "####.##") BigDecimal price) throws ProductException {
 		productService.updateProduct(id, name, price);
 	}

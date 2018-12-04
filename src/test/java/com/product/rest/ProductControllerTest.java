@@ -1,23 +1,58 @@
 package com.product.rest;
 
-public class ProductControllerTest extends AbstractControllerTest {
-/*
-	@Test
-	public void shouldReturnFoundPost() throws Exception {
-		// given
-		LocalDateTime creationDate = LocalDateTime.of(2018, 5, 20, 20, 51, 16);
-		PostDto post = new PostDto("Title", "content", creationDate);
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+import org.springframework.http.MediaType;
+
+import com.product.model.dto.ProductDto;
+
+public class ProductControllerTest extends AbstractControllerTest {
+
+	@Test
+	public void shouldAddProduct() throws Exception {
+		addProduct();
+	}
+
+	private void addProduct() throws Exception {
 		// when
-		when(postService.getPost(1L)).thenReturn(post);
+		when(productService.createProduct("Product", new BigDecimal("99.99"))).thenReturn(1L);
 
 		// then
-		mockMvc.perform(get("/posts/1").accept(APPLICATION_JSON_UTF8))
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(APPLICATION_JSON_UTF8))
-				.andExpect(jsonPath("$.title", is("Title")))
-				.andExpect(jsonPath("$.content", is("content")))
-				.andExpect(jsonPath("$.creationDate", is(creationDate.toString())));
+		mockMvc.perform(put("/product/create?name=Product&price=99.99").contentType(APPLICATION_JSON_UTF8).accept(
+				MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andExpect(content().string("1"));
+	}
 
-	}*/
+	@Test
+	public void shouldUpdateProduct() throws Exception {
+		// then
+		mockMvc.perform(post("/product/update?id=1&name=Product&price=199.99").contentType(
+				APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+	}
+
+	@Test
+	public void shouldGetAllProducts() throws Exception {
+
+		// when
+		List<ProductDto> list = new ArrayList<>();
+		list.add(new ProductDto(1L, "Name", new BigDecimal("99.99")));
+		when(productService.getAll()).thenReturn(list);
+
+		String expectedResponse = "[{\"id\":1,\"name\":\"Name\",\"price\":99.99}]";
+
+		// then
+		mockMvc.perform(get("/product").contentType(
+				APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andExpect(content().string(expectedResponse));
+	}
+
 }
