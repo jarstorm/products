@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,19 @@ public class OrderService {
 	}
 
 	public Long create(String userEmail, List<ProductVo> products) throws ProductException {
+		if (userEmail == null || userEmail.isEmpty()) {
+			throw new IllegalArgumentException("User email should not ne empty");
+		}
+
+		if (!EmailValidator.getInstance().isValid(userEmail)) {
+			throw new IllegalArgumentException("User email has no correct format");
+		}
+
+
+		if (products == null || products.isEmpty()) {
+			throw new IllegalArgumentException("Products should not ne empty");
+		}
+
 		Order order = saveOrder(userEmail);
 
 		List<ProductOrder> productOrders = new ArrayList<>();

@@ -26,6 +26,7 @@
 		<mysql.version>5.1.40</mysql.version>
 		<h2.version>1.4.194</h2.version>
 		<swagger.version>2.9.2</swagger.version>
+		<commons.validator>1.6</commons.validator>
 	</properties>
 
 	<dependencies>
@@ -68,6 +69,14 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>${swagger.version}</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>${commons.validator}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -60,9 +60,9 @@ public class ProductServiceTest {
 	/**
 	 * Should not add a product with a price lower than 0.
 	 */
-	@Test
+	@Test (expected = IllegalArgumentException.class)
 	public void shouldNotAddProductPriceLower0() {
-		Assert.fail("Not implemented yet");
+		productService.createProduct("Name", new BigDecimal("-1"));
 	}
 
 	/**

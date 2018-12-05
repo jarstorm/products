@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.product.exception.OrderException;
 import com.product.exception.ProductException;
 import com.product.model.Order;
 import com.product.model.ProductOrder;
@@ -50,16 +51,8 @@ public class OrderServiceTest {
 	@Test
 	public void createOrder() throws ProductException {
 
-		// Create new product
-		Long productId = productService.createProduct("Name", new BigDecimal("99.99"));
-
-		String userEmail = "a@a.com";
-		List<ProductVo> products = new ArrayList<>();
-		ProductVo product = new ProductVo();
-		product.setAmount(10L);
-		product.setProductId(productId);
-		products.add(product);
-		Long orderId = orderService.create(userEmail, products);
+		// Create new order
+		Long orderId = createBasicOrder();
 
 		// Check that the id is not null
 		assertThat("Order id shouldn't be null", orderId, notNullValue());
@@ -81,18 +74,57 @@ public class OrderServiceTest {
 		}
 	}
 
-	@Test
-	public void shouldNotCreateOrderWithWrongEmailFormat() {
-		Assert.fail("Not implemented yet");
+	private Long createBasicOrder() throws ProductException {
+		Long productId = productService.createProduct("Name", new BigDecimal("99.99"));
+
+		String userEmail = "a@a.com";
+		List<ProductVo> products = new ArrayList<>();
+		ProductVo product = new ProductVo();
+		product.setAmount(10L);
+		product.setProductId(productId);
+		products.add(product);
+		Long orderId = orderService.create(userEmail, products);
+		return orderId;
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void createOrderNullMail() throws ProductException {
+		orderService.create(null, new ArrayList<>());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void createOrderEmptyMail() throws ProductException {
+		orderService.create("", new ArrayList<>());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void createOrderWrongMailFormat() throws ProductException {
+		orderService.create("1-9", new ArrayList<>());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void createOrderEmptyProducts() throws ProductException {
+		orderService.create("a@a.com", new ArrayList<>());
 	}
 
 	@Test
-	public void calculateOrderAmount() {
-		Assert.fail("Not implemented yet");
+	public void calculateOrderAmount() throws ProductException, OrderException {
+		Long orderId = createBasicOrder();
+
+		BigDecimal amount = orderService.calculateAmount(orderId);
+
+		assertThat("Order amount should be the same", amount, equalTo(new BigDecimal("999.90")));
 	}
 
 	@Test
-	public void calculateOrderAmountAfterPriceChange() {
-		Assert.fail("Not implemented yet");
+	public void calculateOrderAmountAfterPriceChange() throws ProductException, OrderException {
+		Long orderId = createBasicOrder();
+
+		productService.updateProduct(1L, "New name", new BigDecimal("199.99"));
+
+		BigDecimal amount = orderService.calculateAmount(orderId);
+
+		assertThat("Order amount should be the same", amount, equalTo(new BigDecimal("999.90")));
+
 	}
 }

@@ -20,6 +20,9 @@ public class ProductService {
 	private ProductRepository productRepository;
 
 	public Long createProduct(String name, BigDecimal price) {
+		if (price.compareTo(BigDecimal.ZERO) < 0) {
+			throw new IllegalArgumentException("Price should not be lower than 0");
+		}
 		Product product = new Product();
 		product.setName(name);
 		product.setPrice(price);
