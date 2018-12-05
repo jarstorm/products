@@ -25,9 +25,9 @@ public class OrderController {
 	private OrderService orderService;
 
 	@PutMapping(value = "/create")
-	@ResponseStatus(HttpStatus.OK)
-	public void create(@RequestBody ProductOrderVo productOrderVo) throws ProductException {
-		orderService.create(productOrderVo.getUserEmail(), productOrderVo.getProducts());
+	@ResponseStatus(HttpStatus.CREATED)
+	public Long create(@RequestBody ProductOrderVo productOrderVo) throws ProductException {
+		return orderService.create(productOrderVo.getUserEmail(), productOrderVo.getProducts());
 	}
 
 	@GetMapping(value = "/filter")

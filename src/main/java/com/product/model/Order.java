@@ -20,7 +20,7 @@ public class Order {
 	@Column(name = "ORDER_DATE")
 	private Calendar creationDate;
 
-	@OneToMany(mappedBy = "id.orderId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "id.orderId", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	private List<ProductOrder> productOrders;
 
 	public Long getId() {

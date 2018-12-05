@@ -21,10 +21,6 @@ public class ProductControllerTest extends AbstractControllerTest {
 
 	@Test
 	public void shouldAddProduct() throws Exception {
-		addProduct();
-	}
-
-	private void addProduct() throws Exception {
 		// when
 		when(productService.createProduct("Product", new BigDecimal("99.99"))).thenReturn(1L);
 

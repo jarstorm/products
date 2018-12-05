@@ -1,19 +1,22 @@
 package com.product.service;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.product.exception.ProductException;
+import com.product.model.Product;
+import com.product.model.dto.ProductDto;
 import com.product.repository.ProductRepository;
 
 @RunWith(SpringRunner.class)
@@ -22,55 +25,97 @@ public class ProductServiceTest {
 
 	@Before
 	public void setUp() {
-		Mockito.reset(productService, productRepository);
+		productReporitory.deleteAll();
 	}
 
-	@MockBean
-	private ProductRepository productRepository;
+	@Autowired
+	private ProductRepository productReporitory;
 
-	@MockBean
+	@Autowired
 	private ProductService productService;
 
+	/**
+	 * Add product test. Check data in database
+	 */
 	@Test
 	public void shouldAddProduct() {
-		// when
+		// Create new product
 		Long productId = productService.createProduct("Name", new BigDecimal("99.99"));
 
+		// Check that the id is not null
 		assertThat("Product id shouldn't be null", productId, notNullValue());
+
+		// Check product database data
+		Optional<Product> productOptional = productReporitory.findById(productId);
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
+			assertThat("Product id should be the same", product.getId(), equalTo(productId));
+			assertThat("Product name should be the same", product.getName(), equalTo("Name"));
+			assertThat("Product price should be the same", product.getPrice(), equalTo(new BigDecimal("99.99")));
+		} else {
+			Assert.fail("Could not be empty");
+		}
 	}
 
-	@Test(expected = ProductException.class)
-	public void shouldUpdateProduct() throws ProductException {
-		// when
-		//when(productRepository.getOne(-1L)).thenReturn(null);
+	/**
+	 * Should not add a product with a price lower than 0.
+	 */
+	@Test
+	public void shouldNotAddProductPriceLower0() {
+		Assert.fail("Not implemented yet");
+	}
 
+	/**
+	 * Testing product update
+	 *
+	 * @throws ProductException if there is no product with this id
+	 */
+	@Test
+	public void shouldUpdateProduct() throws ProductException {
+		// Create new product
+		Long productId = productService.createProduct("Name", new BigDecimal("99.99"));
+
+		// Update it
+		productService.updateProduct(productId, "New name", new BigDecimal("199.99"));
+
+		// Check product database data
+		Optional<Product> productOptional = productReporitory.findById(productId);
+		if (productOptional.isPresent()) {
+			Product product = productOptional.get();
+			assertThat("Product id should be the same", product.getId(), equalTo(productId));
+			assertThat("Product name should be the same", product.getName(), equalTo("New name"));
+			assertThat("Product price should be the same", product.getPrice(), equalTo(new BigDecimal("199.99")));
+		} else {
+			Assert.fail("Could not be empty");
+		}
+	}
+
+	/**
+	 * Testing product update. Cannot be updated because this id will never be in database
+	 *
+	 * @throws ProductException if there is no product with this id
+	 */
+	@Test(expected = ProductException.class)
+	public void shouldUpdateProductError() throws ProductException {
+		// Update a non existing id
 		productService.updateProduct(-1L, "Name", new BigDecimal("99.99"));
 	}
 
-	/*
-	 * @Autowired
-	 * OrderRepository postRepository;
-	 * private Order createTestPost() {
-	 * Order post = new Order();
-	 * post.setTitle("Test title");
-	 * post.setContent("Test content");
-	 * LocalDateTime creationDate = LocalDateTime.of(2018, 5, 20, 20, 51, 16);
-	 * post.setCreationDate(creationDate);
-	 * postRepository.save(post);
-	 * return post;
-	 * }
-	 * @Test
-	 * public void shouldReturnAddedComment() {
-	 * Order post = createTestPost();
-	 * NewCommentDto comment = new NewCommentDto();
-	 * comment.setPostId(post.getId());
-	 * comment.setAuthor("Author");
-	 * comment.setContent("Content");
-	 * commentService.addComment(comment);
-	 * List<CommentDto> comments = commentService.getCommentsForPost(post.getId());
-	 * assertThat("There should be one comment", comments, hasSize(1));
-	 * assertThat(comments.get(0).getAuthor(), equalTo("Author"));
-	 * assertThat(comments.get(0).getComment(), equalTo("Content"));
-	 * }
+	/**
+	 * Return every product.
 	 */
+	@Test
+	public void getAll() {
+		// Check that the list is empty
+		List<ProductDto> products = productService.getAll();
+		assertThat("List is empty", 0, equalTo(products.size()));
+
+		// Add an item
+		productService.createProduct("Name", new BigDecimal("99.99"));
+
+		// Check that the list is not empty
+		products = productService.getAll();
+		assertThat("List is not empty", products.size(), equalTo(1));
+	}
+
 }

@@ -29,22 +29,24 @@ public class OrderService {
 				.getCreationDate(), order.getUserEmail(), order.getProductOrders())).collect(Collectors.toList());
 	}
 
-	public void create(String userEmail, List<ProductVo> products) throws ProductException {
+	public Long create(String userEmail, List<ProductVo> products) throws ProductException {
 		Order order = saveOrder(userEmail);
 
 		List<ProductOrder> productOrders = new ArrayList<>();
 		for (ProductVo productVo : products) {
-			Product product = productRepository.getOne(productVo.getProductId());
-			if (product == null) {
+			Optional<Product> productOptional = productRepository.findById(productVo.getProductId());
+			if (!productOptional.isPresent()) {
 				throw new ProductException("Product with id " + productVo.getProductId() + " not found");
 			}
+			Product product = productOptional.get();
 			ProductOrder productOrder = new ProductOrder(product.getId(), order.getId());
 			productOrder.setAmount(productVo.getAmount());
 			productOrder.setProductPrice(product.getPrice());
 			productOrders.add(productOrder);
 		}
 		order.setProductOrders(productOrders);
-		orderRepository.save(order);
+		order = orderRepository.save(order);
+		return order.getId();
 	}
 
 	private Order saveOrder(String userEmail) {
@@ -56,10 +58,11 @@ public class OrderService {
 	}
 
 	public BigDecimal calculateAmount(Long orderId) throws OrderException {
-		Order order = orderRepository.getOne(orderId);
-		if (order == null) {
+		Optional<Order> orderOptional = orderRepository.findById(orderId);
+		if (!orderOptional.isPresent()) {
 			throw new OrderException("Order with id " + orderId + " not found");
 		}
+		Order order = orderOptional.get();
 		BigDecimal amount = new BigDecimal(0);
 		for (ProductOrder productOrder : order.getProductOrders()) {
 			amount = amount.add(productOrder.getProductPrice().multiply(new BigDecimal(productOrder.getAmount())));

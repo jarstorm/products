@@ -20,7 +20,7 @@ public class Product {
 	@Column(name = "PRODUCT_PRICE")
 	private BigDecimal price;
 
-	@OneToMany(mappedBy = "id.productId", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "id.productId", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
 	private List<ProductOrder> productOrder;
 
 	public Long getId() {
