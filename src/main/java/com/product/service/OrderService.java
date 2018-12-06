@@ -1,87 +1,44 @@
 package com.product.service;
 
 import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.Calendar;
+import java.util.List;
 
 import com.product.exception.OrderException;
 import com.product.exception.ProductException;
-import com.product.model.*;
 import com.product.model.dto.OrderDto;
-import com.product.repository.OrderRepository;
-import com.product.repository.ProductRepository;
 import com.product.rest.bean.ProductVo;
 
-@Service
-public class OrderService {
+/**
+ * Order service.
+ */
+public interface OrderService {
 
-	@Autowired
-	private OrderRepository orderRepository;
+	/**
+	 * Return a list of orders between two dates.
+	 * 
+	 * @param startDate start date
+	 * @param endDate   end date
+	 * @return the list of orders
+	 */
+	List<OrderDto> filterOrders(Calendar startDate, Calendar endDate);
 
-	@Autowired
-	private ProductRepository productRepository;
+	/**
+	 * Create an order,
+	 * 
+	 * @param userEmail user email
+	 * @param products  list of products
+	 * @return the id of the order
+	 * @throws ProductException exception
+	 */
+	Long create(String userEmail, List<ProductVo> products) throws ProductException;
 
-	public List<OrderDto> filterOrders(Calendar startDate, Calendar endDate) {
-		return orderRepository.filterByDates(startDate, endDate).parallelStream().map(order -> new OrderDto(order.getId(), order
-				.getCreationDate(), order.getUserEmail(), order.getProductOrders())).collect(Collectors.toList());
-	}
-
-	public Long create(String userEmail, List<ProductVo> products) throws ProductException {
-		if (userEmail == null || userEmail.isEmpty()) {
-			throw new IllegalArgumentException("User email should not ne empty");
-		}
-
-		if (!EmailValidator.getInstance().isValid(userEmail)) {
-			throw new IllegalArgumentException("User email has no correct format");
-		}
-
-
-		if (products == null || products.isEmpty()) {
-			throw new IllegalArgumentException("Products should not ne empty");
-		}
-
-		Order order = saveOrder(userEmail);
-
-		List<ProductOrder> productOrders = new ArrayList<>();
-		for (ProductVo productVo : products) {
-			Optional<Product> productOptional = productRepository.findById(productVo.getProductId());
-			if (!productOptional.isPresent()) {
-				throw new ProductException("Product with id " + productVo.getProductId() + " not found");
-			}
-			Product product = productOptional.get();
-			ProductOrder productOrder = new ProductOrder(product.getId(), order.getId());
-			productOrder.setAmount(productVo.getAmount());
-			productOrder.setProductPrice(product.getPrice());
-			productOrders.add(productOrder);
-		}
-		order.setProductOrders(productOrders);
-		order = orderRepository.save(order);
-		return order.getId();
-	}
-
-	private Order saveOrder(String userEmail) {
-		Order order = new Order();
-		order.setCreationDate(Calendar.getInstance());
-		order.setUserEmail(userEmail);
-		order = orderRepository.save(order);
-		return order;
-	}
-
-	public BigDecimal calculateAmount(Long orderId) throws OrderException {
-		Optional<Order> orderOptional = orderRepository.findById(orderId);
-		if (!orderOptional.isPresent()) {
-			throw new OrderException("Order with id " + orderId + " not found");
-		}
-		Order order = orderOptional.get();
-		BigDecimal amount = new BigDecimal(0);
-		for (ProductOrder productOrder : order.getProductOrders()) {
-			amount = amount.add(productOrder.getProductPrice().multiply(new BigDecimal(productOrder.getAmount())));
-		}
-		return amount;
-	}
-
+	/**
+	 * Calculate order amount.
+	 * 
+	 * @param orderId order id
+	 * @return the amount of this order
+	 * @throws OrderException exception
+	 */
+	BigDecimal calculateAmount(Long orderId) throws OrderException;
 }

@@ -2,8 +2,15 @@ package com.product.model;
 
 import java.math.BigDecimal;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+/**
+ * Relation product-order entity. Used to storage product price at this moment
+ * (used to recalculate order amount) and units
+ */
 @Entity
 @Table(name = "P_PRODUCT_ORDER")
 public class ProductOrder {
@@ -14,12 +21,13 @@ public class ProductOrder {
 	@Column(name = "PO_PRICE")
 	private BigDecimal productPrice;
 
-	@Column(name = "PO_AMOUNT")
-	private Long amount;
+	@Column(name = "PO_UNITS")
+	private Long units;
 
 	public ProductOrder() {
 
 	}
+
 	public ProductOrder(Long productId, Long orderId) {
 		this.id = new ProductOrderId(productId, orderId);
 	}
@@ -40,11 +48,11 @@ public class ProductOrder {
 		this.productPrice = productPrice;
 	}
 
-	public Long getAmount() {
-		return amount;
+	public Long getUnits() {
+		return units;
 	}
-
-	public void setAmount(Long amount) {
-		this.amount = amount;
+	
+	public void setUnits(Long units) {
+		this.units = units;
 	}
 }

@@ -5,16 +5,39 @@ import java.util.List;
 
 import com.product.model.ProductOrder;
 
+/**
+ * Order DTO. Used to send data from database to REST API
+ */
 public class OrderDto {
 
+	/**
+	 * Order id.
+	 */
 	private Long id;
 
+	/**
+	 * Order creation date.
+	 */
 	private Calendar creationDate;
 
+	/**
+	 * User email.
+	 */
 	private String userEmail;
 
+	/**
+	 * Product orders.
+	 */
 	private List<ProductOrder> productOrders;
 
+	/**
+	 * Public constructor.
+	 * 
+	 * @param id            order id
+	 * @param creationDate  creation date
+	 * @param userEmail     user email
+	 * @param productOrders product orders
+	 */
 	public OrderDto(Long id, Calendar creationDate, String userEmail, List<ProductOrder> productOrders) {
 		this.id = id;
 		this.creationDate = creationDate;

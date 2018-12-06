@@ -5,6 +5,9 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+/**
+ * Product-order table composite id.
+ */
 @Embeddable
 public class ProductOrderId implements Serializable {
 

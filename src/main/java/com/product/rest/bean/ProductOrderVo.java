@@ -2,6 +2,9 @@ package com.product.rest.bean;
 
 import java.util.List;
 
+/**
+ * Product order vo. Used to receive data in REST API. 
+ */
 public class ProductOrderVo {
 
 	private String userEmail;

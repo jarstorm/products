@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.persistence.*;
 
+/**
+ * Product entity.
+ */
 @Entity
 @Table(name = "P_PRODUCT")
 public class Product {

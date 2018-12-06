@@ -18,7 +18,11 @@ import com.product.exception.ProductException;
 import com.product.model.Product;
 import com.product.model.dto.ProductDto;
 import com.product.repository.ProductRepository;
+import com.product.service.impl.ProductServiceImpl;
 
+/**
+ * Test ProductService class.
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ProductServiceTest {
@@ -32,7 +36,7 @@ public class ProductServiceTest {
 	private ProductRepository productReporitory;
 
 	@Autowired
-	private ProductService productService;
+	private ProductServiceImpl productService;
 
 	/**
 	 * Add product test. Check data in database

@@ -2,48 +2,38 @@ package com.product.service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import com.product.exception.ProductException;
-import com.product.model.Product;
 import com.product.model.dto.ProductDto;
-import com.product.repository.ProductRepository;
 
-@Service
-public class ProductService {
+/**
+ * Product service.
+ */
+public interface ProductService {
 
-	@Autowired
-	private ProductRepository productRepository;
+	/**
+	 * Create product.
+	 * 
+	 * @param name  product name
+	 * @param price product price
+	 * @return the id of the product
+	 */
+	Long createProduct(String name, BigDecimal price);
 
-	public Long createProduct(String name, BigDecimal price) {
-		if (price.compareTo(BigDecimal.ZERO) < 0) {
-			throw new IllegalArgumentException("Price should not be lower than 0");
-		}
-		Product product = new Product();
-		product.setName(name);
-		product.setPrice(price);
-		product = productRepository.save(product);
-		return product.getId();
-	}
+	/**
+	 * Update product
+	 * 
+	 * @param id    product id
+	 * @param name  product name
+	 * @param price product price
+	 * @throws ProductException exception
+	 */
+	void updateProduct(Long id, String name, BigDecimal price) throws ProductException;
 
-	public void updateProduct(Long id, String name, BigDecimal price) throws ProductException {
-		Optional<Product> productOptional = productRepository.findById(id);
-		if (!productOptional.isPresent()) {
-			throw new ProductException("Product with id " + id + " not found");
-		}
-		Product product = productOptional.get();
-		product.setName(name);
-		product.setPrice(price);
-		productRepository.save(product);
-	}
-
-	public List<ProductDto> getAll() {
-		return productRepository.findAll().parallelStream().map(product -> new ProductDto(product.getId(), product.getName(),
-				product.getPrice())).collect(Collectors.toList());
-	}
+	/**
+	 * Get all products.	
+	 * @return the list of every product
+	 */
+	List<ProductDto> getAll();
 
 }

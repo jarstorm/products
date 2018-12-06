@@ -5,6 +5,9 @@ import java.util.List;
 
 import javax.persistence.*;
 
+/**
+ * Order entity.
+ */
 @Entity
 @Table(name = "P_ORDER")
 public class Order {
